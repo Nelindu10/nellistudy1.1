@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef, useMemo } from 'react';
 import {
   PYTHON_MAIN_CODE,
+  NODE_DB_CONFIG_CODE,
   AJAX_INDEX_SNIPPET,
   JINJA_ANALYZE_SNIPPET,
   REQUIREMENTS_TXT
@@ -377,7 +378,7 @@ export default function App() {
 
   // Code Inspector Modal State
   const [showCodeModal, setShowCodeModal] = useState(false);
-  const [activeCodeTab, setActiveCodeTab] = useState<'main' | 'ajax' | 'jinja' | 'reqs'>('main');
+  const [activeCodeTab, setActiveCodeTab] = useState<'node' | 'main' | 'ajax' | 'jinja' | 'reqs'>('node');
   const [copiedTab, setCopiedTab] = useState<string | null>(null);
 
   // Focus Orb Pomodoro State
@@ -2417,6 +2418,16 @@ export default function App() {
             <div className="flex items-center justify-between px-6 py-2.5 bg-[#1c1f2a] border-b border-[#313540] flex-wrap gap-2">
               <div className="flex items-center gap-2">
                 <button
+                  onClick={() => setActiveCodeTab('node')}
+                  className={`px-3 py-1.5 rounded-lg font-['JetBrains_Mono'] text-xs font-semibold cursor-pointer transition-all ${
+                    activeCodeTab === 'node'
+                      ? 'bg-[#4edea3] text-[#003822] shadow-[0_0_12px_rgba(78,222,163,0.4)]'
+                      : 'text-[#d8c3ad] hover:text-white hover:bg-[#262a35]'
+                  }`}
+                >
+                  🟢 Node.js (mongodb.ts)
+                </button>
+                <button
                   onClick={() => setActiveCodeTab('main')}
                   className={`px-3 py-1.5 rounded-lg font-['JetBrains_Mono'] text-xs font-semibold cursor-pointer transition-all ${
                     activeCodeTab === 'main'
@@ -2424,7 +2435,7 @@ export default function App() {
                       : 'text-[#d8c3ad] hover:text-white hover:bg-[#262a35]'
                   }`}
                 >
-                  🐍 main.py (Flask Backend)
+                  🐍 Python (main.py)
                 </button>
                 <button
                   onClick={() => setActiveCodeTab('ajax')}
@@ -2434,7 +2445,7 @@ export default function App() {
                       : 'text-[#d8c3ad] hover:text-white hover:bg-[#262a35]'
                   }`}
                 >
-                  ⚡ index.html AJAX Snippet
+                  ⚡ index.html AJAX
                 </button>
                 <button
                   onClick={() => setActiveCodeTab('jinja')}
@@ -2444,7 +2455,7 @@ export default function App() {
                       : 'text-[#d8c3ad] hover:text-white hover:bg-[#262a35]'
                   }`}
                 >
-                  📜 analyze.html Jinja2 Template
+                  📜 analyze.html Jinja2
                 </button>
                 <button
                   onClick={() => setActiveCodeTab('reqs')}
@@ -2454,7 +2465,7 @@ export default function App() {
                       : 'text-[#d8c3ad] hover:text-white hover:bg-[#262a35]'
                   }`}
                 >
-                  📦 requirements.txt &amp; .env
+                  📦 .env &amp; Config
                 </button>
               </div>
 
@@ -2462,7 +2473,9 @@ export default function App() {
               <button
                 onClick={() => {
                   const content =
-                    activeCodeTab === 'main'
+                    activeCodeTab === 'node'
+                      ? NODE_DB_CONFIG_CODE
+                      : activeCodeTab === 'main'
                       ? PYTHON_MAIN_CODE
                       : activeCodeTab === 'ajax'
                       ? AJAX_INDEX_SNIPPET
@@ -2483,6 +2496,7 @@ export default function App() {
             {/* Code Content Viewport */}
             <div className="flex-1 p-6 overflow-y-auto bg-[#0a0e18] font-mono text-xs text-[#dfe2f1] leading-relaxed">
               <pre className="whitespace-pre overflow-x-auto p-4 rounded-xl bg-[#0f131d] border border-[#313540]">
+                {activeCodeTab === 'node' && NODE_DB_CONFIG_CODE}
                 {activeCodeTab === 'main' && PYTHON_MAIN_CODE}
                 {activeCodeTab === 'ajax' && AJAX_INDEX_SNIPPET}
                 {activeCodeTab === 'jinja' && JINJA_ANALYZE_SNIPPET}

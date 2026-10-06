@@ -14,13 +14,14 @@ app = Flask(__name__)
 # ==============================================================================
 # 1. MONGODB ATLAS CONNECTION & COLLECTIONS
 # ==============================================================================
-MONGO_URI = os.getenv("MONGO_URI", "mongodb://localhost:27017")
-DB_NAME = os.getenv("DB_NAME", "nellistudy_db")
+# Environment variables: MONGODB_URI & study_quest_db
+MONGO_URI = os.getenv("MONGODB_URI", os.getenv("MONGO_URI", "mongodb+srv://dahamithawickramasinghe_db_user:daha2004@cluster0.uiwpse0.mongodb.net/study_quest_db?appName=Cluster0"))
+DB_NAME = os.getenv("MONGODB_DB_NAME", os.getenv("DB_NAME", "study_quest_db"))
 
 try:
-    client = MongoClient(MONGO_URI, serverSelectionTimeoutMS=5000)
+    client = MongoClient(MONGO_URI, serverSelectionTimeoutMS=8000)
     client.admin.command('ping')
-    print("🔮 [MongoDB Atlas] Successfully connected to Nelli Study cluster!")
+    print(f"🔮 [MongoDB Atlas] Successfully connected to cluster! Active database: '{DB_NAME}'")
 except ConnectionFailure as e:
     print(f"⚠️ [MongoDB Atlas] Warning: Could not connect to cluster: {e}")
 
@@ -870,8 +871,52 @@ export const JINJA_ANALYZE_SNIPPET = `<!-- =====================================
 </div>
 `;
 
-export const REQUIREMENTS_TXT = `Flask>=3.0.0
+export const REQUIREMENTS_TXT = `# Python requirements.txt
+Flask>=3.0.0
 pymongo>=4.6.0
 python-dotenv>=1.0.0
 dnspython>=2.5.0
+
+# Node.js package.json dependencies
+# npm install mongodb express dotenv tsx
 `;
+
+export const NODE_DB_CONFIG_CODE = `// src/db/mongodb.ts
+// MongoDB Atlas Connection Configuration using process.env.MONGODB_URI
+import { MongoClient, Db, Collection, ObjectId } from 'mongodb';
+import dotenv from 'dotenv';
+
+dotenv.config();
+
+// Reads securely from process.env.MONGODB_URI
+const MONGODB_URI = process.env.MONGODB_URI || 'mongodb+srv://dahamithawickramasinghe_db_user:daha2004@cluster0.uiwpse0.mongodb.net/study_quest_db?appName=Cluster0';
+const DB_NAME = process.env.MONGODB_DB_NAME || 'study_quest_db';
+
+let client: MongoClient | null = null;
+let dbInstance: Db | null = null;
+
+export async function connectToDatabase() {
+  if (dbInstance && client) {
+    return {
+      db: dbInstance,
+      disciplines: dbInstance.collection('disciplines'),
+      studyTopics: dbInstance.collection('study_topics')
+    };
+  }
+
+  client = new MongoClient(MONGODB_URI, {
+    serverSelectionTimeoutMS: 8000,
+  });
+
+  await client.connect();
+  dbInstance = client.db(DB_NAME);
+  console.log(\`✅ Connected to MongoDB Atlas (\${DB_NAME})\`);
+
+  return {
+    db: dbInstance,
+    disciplines: dbInstance.collection('disciplines'),
+    studyTopics: dbInstance.collection('study_topics')
+  };
+}
+`;
+
