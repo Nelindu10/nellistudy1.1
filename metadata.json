@@ -1,0 +1,6 @@
+{
+  "name": "StudyQuest - Gamified Topic Tracker",
+  "description": "Gamified study topic tracker and mastery grimoire with Python Flask MongoDB backend architecture and cognitive analytics.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
